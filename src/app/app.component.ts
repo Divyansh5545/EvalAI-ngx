@@ -3,7 +3,7 @@ import {mergeMap, map, filter} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, HostListener, Inject } from '@angular/core';
 import { GlobalService } from './services/global.service';
 import { AuthService } from './services/auth.service';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute, NavigationStart } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 
@@ -30,8 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   globalEditPhaseModalSubscription: any;
   globalTermsAndConditionsModalSubscription: any;
   globalServiceSubscriptionScrollTop: any;
-  header: boolean = false;
-  footer: boolean = false;
+  showNav: boolean = false;
   /**
    * Constructor.
    * @param document  Window document injection
@@ -49,25 +48,16 @@ export class AppComponent implements OnInit, OnDestroy {
   private globalService: GlobalService,
   private authService: AuthService
   ) {
-  }
-
- constructor(private router: Router) {
     router.events.forEach((event) => {
       if (event instanceof NavigationStart) {
-        if (event['url'] == '/components/auth' || event['url'] == '/components/dashboard') {
-          this.header = false;
+        if (event['url'] === '/auth' || event['url'] === '/dashboard'){
+          this.showNav = false;
         } else {
-          this.header = true;
-        }
-        if (event['url'] == '/components/auth') {
-          this.footer = false;
-        } else {
-          this.footer = true;
+          this.showNav = true;
         }
       }
-    }
-    
-  
+    });
+  }
   /**
    * Scroll event listener.
    */
